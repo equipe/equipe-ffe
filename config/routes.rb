@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  root 'home#index'
   namespace :file do
     resources :entries, only: :create
     resources :results, only: :create
