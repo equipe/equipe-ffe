@@ -164,6 +164,8 @@ class ResultFile
   #   </resultat>
   # </engagement>
 
+  RESULT_DETAILS_DEFAULT = { 'starts' => [] }
+
   def write_show_jumping_results(competition, start, xml)
     start_attributes = {}
     if start['status'].present?
@@ -175,7 +177,7 @@ class ResultFile
     end
     xml.resultat start_attributes do
       xml.detail do
-        competition.result_details['starts'].each do |manche|
+        (competition.result_details || RESULT_DETAILS_DEFAULT)['starts'].each do |manche|
           if competition.result_details['starts'].one?
             status = start['results'].detect { |result| result['status'].present? }&.dig('status')
           else
