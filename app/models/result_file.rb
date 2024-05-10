@@ -163,9 +163,7 @@ class ResultFile
   #     </detail>
   #   </resultat>
   # </engagement>
-
-  RESULT_DETAILS_DEFAULT = { 'starts' => [] }
-
+  RESULT_DETAILS_FALLBACK = { 'starts' => [], 'competitions' => [] }
   def write_show_jumping_results(competition, start, xml)
     start_attributes = {}
     if start['status'].present?
@@ -177,7 +175,7 @@ class ResultFile
     end
     xml.resultat start_attributes do
       xml.detail do
-        (competition.result_details || RESULT_DETAILS_DEFAULT)['starts'].each do |manche|
+        (competition.result_details || RESULT_DETAILS_FALLBACK)['starts'].each do |manche|
           if competition.result_details['starts'].one?
             status = start['results'].detect { |result| result['status'].present? }&.dig('status')
           else
@@ -238,7 +236,7 @@ class ResultFile
   def write_result_show_jumping_details(competition, result_competition, xml)
     xml.resultat do
       xml.detail do
-        competition.result_details['competitions'].each do |manche|
+        (competition.result_details || RESULT_DETAILS_FALLBACK)['competitions'].each do |manche|
           xml.manche num: manche['num'] do
             manche['scores'].each do |score|
               value = case score['nom']
