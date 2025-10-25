@@ -5,7 +5,7 @@ class Equipe::HorseName
   end
 
   def normalize
-    converted = name.to_s.mb_chars.titleize.to_s
+    converted = name.to_s.titleize
     converted.gsub!(/\b[a-z]{,2}$/i) { |s| s.upcase }
     converted.gsub!(/\bsfn$/i) { |s| s.upcase }
     converted.gsub!(/\bvdl\b/i) { |s| s.upcase }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ffe:message xmlns:ffe="http://www.ffe.com/schemas" version="1.0">
+  <concours num="1694854" nom="CONCOURS DE SAUT D'OBSTACLES" discipline="01">
+    <organisateur num="12345" nom="SPORTS EQU DE BELLE FERME"/>
+
+    <profil>
+      <resultat>
+        <detail id="detail1" nom="Barème A">
+          <epreuve>
+            <manche num="1" bareme="Barème A au chrono" concerne="M">
+              <score num="1" nom="Points" unite="P" nom_unite="Points" obligatoire="true"/>
+              <score num="2" nom="Temps" unite="T" nom_unite="Temps" obligatoire="true"/>
+            </manche>
+          </epreuve>
+          <manche num="1" bareme="Barème A au chrono" concerne="M">
+            <score num="1" nom="Points" unite="P" nom_unite="Points"/>
+            <score num="2" nom="Temps" unite="T" nom_unite="Temps"/>
+          </manche>
+        </detail>
+      </resultat>
+    </profil>
+
+    <epreuve num="05" date="2024-06-15" nom_categorie="Poney 4 Grand Prix" discipline="01" montant_eng_terrain="10.00">
+      <engagement id="169485405 00001" dossard="20">
+        <cavalier lic="CAV123"/>
+        <equide sire="SIRE123"/>
+      </engagement>
+    </epreuve>
+  </concours>
+
+  <cavalier lic="CAV123" prenom="Unititled" nom="Unititled" club="CLUB001" nom_club="SPORTS EQU DE BELLE FERME" region="22" nom_region="RHONE ALPES" dnaiss="2005-03-15"/>
+
+  <equide sire="SIRE123" nom="Unititled" taille="141" race="PONEY FRANCAIS DE SELLE" code_race="PFS" code_robe="ALEZAN" dnaiss="2001-04-20" transpondeur="250259600183712" sexe="H">
+    <pere nom="Sire"/>
+    <mere nom="Dam">
+      <pere nom="Dam Sire"/>
+    </mere>
+  </equide>
+
+  <officiel lic="OFF001" prenom="Jean" nom="Dupont"/>
+</ffe:message>

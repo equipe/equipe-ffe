@@ -27,24 +27,26 @@ class Equipe::Entries
   attr_reader :show
 
   def competitions
-    show.competitions.select(:id, :competition_no, :name, :starts_on, :discipline, :horse_pony, :judgement_id, :late_entry_fee, 'true AS randomized', "'N'::text AS status", "'all_categories_together'::text AS category_merge").map do |competition|
+    show.competitions.select(:id, :competition_no, :name, :starts_on, :discipline, :horse_pony, :judgement_id, :late_entry_fee, 'true AS randomized', "CAST('N' AS TEXT) AS status", "CAST('all_categories_together' AS TEXT) AS category_merge").map do |competition|
       attrs = competition.attributes
       attrs['id'] = attrs['id'].to_s
+      attrs['randomized'] = !!attrs['randomized'] # Convert to boolean (SQLite returns 1/0)
       attrs.compact
     end
   end
 
   def people
-    show.people.select(:id, :first_name, :last_name, :licence, 'birthday AS person_no', "'FRA'::text AS country", :official, :club_id).map do |person|
+    show.people.select(:id, :first_name, :last_name, :licence, 'birthday AS person_no', "CAST('FRA' AS TEXT) AS country", :official, :club_id).map do |person|
       attrs = person.attributes
       attrs['id'] = attrs['id'].to_s
       attrs['club_id'] = attrs['club_id'].to_s
+      attrs['official'] = !!attrs['official'] # Convert to boolean (SQLite returns 1/0)
       attrs.compact
     end
   end
 
   def clubs
-    show.clubs.select(:id, :name, 'clubs.ffe_id AS logo_id', "'ffe'::text AS logo_group").map do |club|
+    show.clubs.select(:id, :name, 'clubs.ffe_id AS logo_id', "CAST('ffe' AS TEXT) AS logo_group").map do |club|
       attrs = club.attributes
       attrs['id'] = attrs['id'].to_s
       attrs.compact

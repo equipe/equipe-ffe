@@ -18,19 +18,19 @@ class EntryFileTest < ActiveSupport::TestCase
     assert_equal "Unititled", entry.rider.last_name
     assert_equal "22", entry.rider.region.ffe_id
     assert_equal "RHONE ALPES", entry.rider.region.name
-    assert_equal "SPORTS EQU DE BELLE FERME", entry.rider.club.name
+    assert_equal "Sports Equ De Belle Ferme", entry.rider.club.name
 
     assert_equal "Unititled", entry.horse.name
     assert_equal 141, entry.horse.height
     assert_equal "PONEY FRANCAIS DE SELLE", entry.horse.race
     assert_equal "PFS", entry.horse.breed
-    assert_equal "ALEZAN", entry.horse.color
+    assert_equal "Alezan", entry.horse.color
     assert_equal 2001, entry.horse.born_year
     assert_equal "250259600183712", entry.horse.chip_no
     assert_equal "G", entry.horse.sex
     assert_equal "Sire", entry.horse.sire
     assert_equal "Dam", entry.horse.dam
-    assert_equal "DamSire", entry.horse.dam_sire
+    assert_equal "Dam Sire", entry.horse.dam_sire
   end
 
   test "imports dressage entries" do
@@ -49,13 +49,13 @@ class EntryFileTest < ActiveSupport::TestCase
     assert_equal "Unititled", entry.rider.last_name
     assert_equal "22", entry.rider.region.ffe_id
     assert_equal "RHONE ALPES", entry.rider.region.name
-    assert_equal "SPORTS EQU DE BELLE FERME", entry.rider.club.name
+    assert_equal "Sports Equ De Belle Ferme", entry.rider.club.name
 
     assert_equal "Unititled", entry.horse.name
     assert_equal 148, entry.horse.height
     assert_equal "DEUTSCHES REITPONY", entry.horse.race
     assert_equal "DRPON", entry.horse.breed
-    assert_equal "ALEZAN", entry.horse.color
+    assert_equal "Alezan", entry.horse.color
     assert_equal 1994, entry.horse.born_year
     assert_equal "756095200047042", entry.horse.chip_no
     assert_equal "S", entry.horse.sex

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ffe:message xmlns:ffe="http://www.ffe.com/schemas" version="1.0">
+  <concours num="1694861" nom="CONCOURS DE DRESSAGE" discipline="03">
+    <organisateur num="12345" nom="SPORTS EQU DE BELLE FERME"/>
+
+    <epreuve num="06" date="2024-06-16" nom_categorie="Poney 1 Grand Prix" discipline="03" montant_eng_terrain="15.00">
+      <engagement id="169486106 00001" dossard="1">
+        <cavalier lic="CAV456"/>
+        <equide sire="SIRE456"/>
+      </engagement>
+    </epreuve>
+  </concours>
+
+  <cavalier lic="CAV456" prenom="Unititled" nom="Unititled" club="CLUB001" nom_club="SPORTS EQU DE BELLE FERME" region="22" nom_region="RHONE ALPES" dnaiss="2006-07-22"/>
+
+  <equide sire="SIRE456" nom="Unititled" taille="148" race="DEUTSCHES REITPONY" code_race="DRPON" code_robe="ALEZAN" dnaiss="1994-05-10" transpondeur="756095200047042" sexe="M">
+    <pere nom="Unititled"/>
+    <mere nom="Unititled">
+      <pere nom="Unititled"/>
+    </mere>
+  </equide>
+
+  <officiel lic="OFF002" prenom="Marie" nom="Martin"/>
+</ffe:message>
