@@ -1,5 +1,4 @@
 class Equipe::HorseName
-
   def initialize(name)
     @name = name
   end

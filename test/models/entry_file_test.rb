@@ -1,13 +1,12 @@
-require 'test_helper'
+require "test_helper"
 
 class EntryFileTest < ActiveSupport::TestCase
-
   test "imports show jumping entries" do
-    parser = EntryFile.new(Rails.root.join('test', 'fixtures', 'files', 'conc1694854.xml').read)
+    parser = EntryFile.new(Rails.root.join("test", "fixtures", "files", "conc1694854.xml").read)
 
     parser.import
 
-    entry = Entry.find_by(ffe_id: '169485405 00001')
+    entry = Entry.find_by(ffe_id: "169485405 00001")
 
     assert_equal 20, entry.start_no
     assert_equal "05", entry.competition.competition_no
@@ -34,11 +33,11 @@ class EntryFileTest < ActiveSupport::TestCase
   end
 
   test "imports dressage entries" do
-    parser = EntryFile.new(Rails.root.join('test', 'fixtures', 'files', 'conc1694861.xml').read)
+    parser = EntryFile.new(Rails.root.join("test", "fixtures", "files", "conc1694861.xml").read)
 
     parser.import
 
-    entry = Entry.find_by(ffe_id: '169486106 00001')
+    entry = Entry.find_by(ffe_id: "169486106 00001")
 
     assert_equal 1, entry.start_no
     assert_equal "06", entry.competition.competition_no
@@ -71,5 +70,4 @@ class EntryFileTest < ActiveSupport::TestCase
     parser = EntryFile.new(nil)
     assert_not parser.valid?
   end
-
 end

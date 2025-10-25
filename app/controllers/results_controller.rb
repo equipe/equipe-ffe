@@ -6,5 +6,4 @@ class ResultsController < ApplicationController
     Rails.logger.info "GOT #{results.inspect}"
     head :accepted
   end
-
 end

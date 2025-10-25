@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class ResultFile
   ClubNotFound = Class.new(StandardError)
 
@@ -8,39 +9,39 @@ class ResultFile
   end
 
   def to_xml(*)
-    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      xml.message('xmlns:ffe' => 'http://www.ffe.com/message', 'version' => '1.1') do
-        xml.info 'logiciel' => 'Equipe', 'version' => '5.0.0'
-        xml.concours 'num' => show.ffe_id do
-          results['competitions'].pluck('id', 'foreign_id').each do |equipe_competition_id, competition_id|
+    builder = Nokogiri::XML::Builder.new(encoding: "UTF-8") do |xml|
+      xml.message("xmlns:ffe" => "http://www.ffe.com/message", "version" => "1.1") do
+        xml.info "logiciel" => "Equipe", "version" => "5.0.0"
+        xml.concours "num" => show.ffe_id do
+          results["competitions"].pluck("id", "foreign_id").each do |equipe_competition_id, competition_id|
             competition = Competition.find_by(id: competition_id)
             result_competition = result_competitions[equipe_competition_id]
             if competition
               xml.epreuve num: competition.competition_no, profil_detail: competition.profil_detail do
-                starts = results['starts'].select { |start| start['competition_id'] == equipe_competition_id }
+                starts = results["starts"].select { |start| start["competition_id"] == equipe_competition_id }
                 starts.each do |start|
-                  entry = Entry.find_by(id: start['foreign_id'])
+                  entry = Entry.find_by(id: start["foreign_id"])
                   engagement_attributes = {}
                   if entry
-                    engagement_attributes['id'] = entry.ffe_id
-                    engagement_attributes['dossard'] = entry.start_no
+                    engagement_attributes["id"] = entry.ffe_id
+                    engagement_attributes["dossard"] = entry.start_no
                   else
-                    engagement_attributes['terrain'] = true
+                    engagement_attributes["terrain"] = true
                   end
                   xml.engagement engagement_attributes do
-                    if entry&.rider&.licence != result_riders.dig(start['rider_id'], 'licence')
+                    if entry&.rider&.licence != result_riders.dig(start["rider_id"], "licence")
                       cavalier_attributes = {}
-                      cavalier_attributes[:lic] = result_riders.dig(start['rider_id'], 'licence')
+                      cavalier_attributes[:lic] = result_riders.dig(start["rider_id"], "licence")
                       cavalier_attributes[:changement] = true if entry.present?
                       xml.cavalier cavalier_attributes
                     end
-                    if entry&.horse&.licence != result_horses.dig(start['horse_id'], 'license')
+                    if entry&.horse&.licence != result_horses.dig(start["horse_id"], "license")
                       equide_attributes = {}
-                      equide_attributes[:sire] = result_horses.dig(start['horse_id'], 'license')
+                      equide_attributes[:sire] = result_horses.dig(start["horse_id"], "license")
                       equide_attributes[:changement] = true if entry.present?
                       xml.equide equide_attributes
                     end
-                    club = Club.find_by(id: result_clubs.dig(result_riders.dig(start['rider_id'], 'club_id'), 'foreign_id'))
+                    club = Club.find_by(id: result_clubs.dig(result_riders.dig(start["rider_id"], "club_id"), "foreign_id"))
                     raise ClubNotFound, "#{result_riders.dig(start['rider_id'], 'first_name')} #{result_riders.dig(start['rider_id'], 'last_name')} club not found" unless club
                     if entry&.rider&.club&.ffe_id != club.ffe_id
                       xml.club num: club.ffe_id
@@ -64,16 +65,16 @@ class ResultFile
   attr_reader :show, :results
 
   DISCIPLINE = {
-    'D' => 'dressage',
-    'H' => 'show_jumping'
+    "D" => "dressage",
+    "H" => "show_jumping"
   }
 
   JUDGE_BY = {
-    'E' => 5,
-    'H' => 3,
-    'C' => 1,
-    'M' => 2,
-    'B' => 4
+    "E" => 5,
+    "H" => 3,
+    "C" => 1,
+    "M" => 2,
+    "B" => 4
   }
 
   # <xsd:restriction base="xsd:string">
@@ -92,10 +93,10 @@ class ResultFile
   #   S: Disqualifié
 
   FFE_STATUS = {
-    'WD' => 'NP',
-    'RET' => 'AB',
-    'EL' => 'EL',
-    'SUSP' => 'DISQ'
+    "WD" => "NP",
+    "RET" => "AB",
+    "EL" => "EL",
+    "SUSP" => "DISQ"
   }
 
   def result_detail_writer(competition)
@@ -123,16 +124,16 @@ class ResultFile
   end
 
   def write_dressage_results(competition, start, xml)
-    dressage_total = start['results'].detect { |result| result['type'] == 'dressage_total' }
-    xml.resultat 'note' => format_percent(dressage_total && dressage_total['percent']) do
+    dressage_total = start["results"].detect { |result| result["type"] == "dressage_total" }
+    xml.resultat "note" => format_percent(dressage_total && dressage_total["percent"]) do
       xml.detail do
-        xml.manche 'num' => 1 do
-          start['results'].reverse.each do |result|
-            case result['type']
-            when 'dressage'
-              xml.score 'num' => JUDGE_BY[result['judge_by']], 'score' => format_percent(result['percent'])
-            when 'dressage_total'
-              xml.score 'num' => 6, 'score' => format_percent(result['percent'])
+        xml.manche "num" => 1 do
+          start["results"].reverse.each do |result|
+            case result["type"]
+            when "dressage"
+              xml.score "num" => JUDGE_BY[result["judge_by"]], "score" => format_percent(result["percent"])
+            when "dressage_total"
+              xml.score "num" => 6, "score" => format_percent(result["percent"])
             end
           end
         end
@@ -163,62 +164,61 @@ class ResultFile
   #     </detail>
   #   </resultat>
   # </engagement>
-  RESULT_DETAILS_FALLBACK = { 'starts' => [], 'competitions' => [] }
+  RESULT_DETAILS_FALLBACK = { "starts" => [], "competitions" => [] }
   def write_show_jumping_results(competition, start, xml)
     start_attributes = {}
-    if start['status'].present?
-      start_attributes['etat'] = FFE_STATUS['WD']
-    elsif start.dig('results', 0, 'status').present?
-      start_attributes['etat'] = FFE_STATUS[start.dig('results', 0, 'status')]
+    if start["status"].present?
+      start_attributes["etat"] = FFE_STATUS["WD"]
+    elsif start.dig("results", 0, "status").present?
+      start_attributes["etat"] = FFE_STATUS[start.dig("results", 0, "status")]
     else
-      start_attributes['classement'] = start['rank']
+      start_attributes["classement"] = start["rank"]
     end
     xml.resultat start_attributes do
       xml.detail do
-        (competition.result_details || RESULT_DETAILS_FALLBACK)['starts'].each do |manche|
-          if competition.result_details['starts'].one?
-            status = start['results'].detect { |result| result['status'].present? }&.dig('status')
+        (competition.result_details || RESULT_DETAILS_FALLBACK)["starts"].each do |manche|
+          if competition.result_details["starts"].one?
+            status = start["results"].detect { |result| result["status"].present? }&.dig("status")
           else
-            status = start['results'].detect { |result| result['round_no'] == manche['num'].to_i }&.dig('status')
+            status = start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("status")
           end
-          status = 'WD' if status.blank? && start['status'].present?
+          status = "WD" if status.blank? && start["status"].present?
           manche_attributes = {}
-          manche_attributes['num'] = manche['num']
-          manche_attributes['etat'] = FFE_STATUS[status] if status.present?
+          manche_attributes["num"] = manche["num"]
+          manche_attributes["etat"] = FFE_STATUS[status] if status.present?
           xml.manche manche_attributes do
-            manche['scores'].each do |score|
-              value = case score['nom']
-              when 'Temps'
-                start['results'].detect { |result| result['round_no'] == manche['num'].to_i }&.dig('time')
-              when 'Pénalités de Temps'
-                start['results'].detect { |result| result['round_no'] == manche['num'].to_i }&.dig('time_faults')
-              when 'Temps 1re phase'
-                start['results'].detect { |result| result['round_no'] == 1 }&.dig('time')
-              when 'Pénalités de Temps 1re phase'
-                start['results'].detect { |result| result['round_no'] == 1 }&.dig('time_faults')
-              when 'Temps 2e phase'
-                start['results'].detect { |result| result['round_no'] == 2 }&.dig('time')
-              when 'Pénalités de Temps 2e phase'
-                start['results'].detect { |result| result['round_no'] == 2 }&.dig('time_faults')
-              when 'Points sur la piste'
-                if competition.result_details['starts'].one?
-                  start['results'].select { |result| result['type'] == 'show_jumping' }.map { |result| result['fence_faults'] }.compact.sum
+            manche["scores"].each do |score|
+              value = case score["nom"]
+              when "Temps"
+                start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("time")
+              when "Pénalités de Temps"
+                start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("time_faults")
+              when "Temps 1re phase"
+                start["results"].detect { |result| result["round_no"] == 1 }&.dig("time")
+              when "Pénalités de Temps 1re phase"
+                start["results"].detect { |result| result["round_no"] == 1 }&.dig("time_faults")
+              when "Temps 2e phase"
+                start["results"].detect { |result| result["round_no"] == 2 }&.dig("time")
+              when "Pénalités de Temps 2e phase"
+                start["results"].detect { |result| result["round_no"] == 2 }&.dig("time_faults")
+              when "Points sur la piste"
+                if competition.result_details["starts"].one?
+                  start["results"].select { |result| result["type"] == "show_jumping" }.map { |result| result["fence_faults"] }.compact.sum
                 else
                   raise "Don't know how to get #{score['nom']} profile #{competition.profil_detail}"
                 end
-              when 'Total Pénalités'
-                start['results'].detect { |result| result['type'] == 'show_jumping_total' }&.dig('faults')
-              when 'Total pénalités', 'Score sur la piste'
-                start['results'].detect { |result| result['round_no'] == manche['num'].to_i }&.dig('faults')
+              when "Total Pénalités"
+                start["results"].detect { |result| result["type"] == "show_jumping_total" }&.dig("faults")
+              when "Total pénalités", "Score sur la piste"
+                start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("faults")
               else
                 raise "Don't know how to get #{score['nom']} profile #{competition.profil_detail}"
               end
               if status.blank?
-                xml.score num: score['num'], score: value
+                xml.score num: score["num"], score: value
               end
             end
           end
-
         end
       end
     end
@@ -236,20 +236,20 @@ class ResultFile
   def write_result_show_jumping_details(competition, result_competition, xml)
     xml.resultat do
       xml.detail do
-        (competition.result_details || RESULT_DETAILS_FALLBACK)['competitions'].each do |manche|
-          xml.manche num: manche['num'] do
-            manche['scores'].each do |score|
-              value = case score['nom']
-              when 'Temps accordé 1re phase'
+        (competition.result_details || RESULT_DETAILS_FALLBACK)["competitions"].each do |manche|
+          xml.manche num: manche["num"] do
+            manche["scores"].each do |score|
+              value = case score["nom"]
+              when "Temps accordé 1re phase"
                 max_time_for(result_competition, 1)
-              when 'Temps accordé 2e phase'
+              when "Temps accordé 2e phase"
                 max_time_for(result_competition, 2)
-              when 'Temps accordé'
-                max_time_for(result_competition, manche['num'].to_i)
+              when "Temps accordé"
+                max_time_for(result_competition, manche["num"].to_i)
               else
                 raise "Don't know how to get #{score['nom']}"
               end
-              xml.score num: score['num'], score: value
+              xml.score num: score["num"], score: value
             end
           end
         end
@@ -261,26 +261,26 @@ class ResultFile
   end
 
   def result_riders
-    @result_riders ||= results['people'].index_by { |attrs| attrs['id'] }
+    @result_riders ||= results["people"].index_by { |attrs| attrs["id"] }
   end
 
   def result_clubs
-    @result_clubs ||= results['clubs'].index_by { |attrs| attrs['id'] }
+    @result_clubs ||= results["clubs"].index_by { |attrs| attrs["id"] }
   end
 
   def result_horses
-    @result_horses ||= results['horses'].index_by { |attrs| attrs['id'] }
+    @result_horses ||= results["horses"].index_by { |attrs| attrs["id"] }
   end
 
   def result_competitions
-    @result_competitions ||= results['competitions'].index_by { |attrs| attrs['id'] }
+    @result_competitions ||= results["competitions"].index_by { |attrs| attrs["id"] }
   end
 
   def max_time_for(result_competition, round_no)
-    result_competition.dig('judgement', 'rounds').detect { |attrs| attrs['round_no'] == round_no }&.dig('max_time').to_i
+    result_competition.dig("judgement", "rounds").detect { |attrs| attrs["round_no"] == round_no }&.dig("max_time").to_i
   end
 
   def format_percent(value)
-    format('%.3f', value) if value && value.present?
+    format("%.3f", value) if value && value.present?
   end
 end
