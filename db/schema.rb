@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2016_11_27_230619) do
+ActiveRecord::Schema[8.1].define(version: 2025_10_26_065159) do
   create_table "clubs", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.string "ffe_id"
@@ -47,6 +47,20 @@ ActiveRecord::Schema[8.1].define(version: 2016_11_27_230619) do
     t.index ["ffe_id"], name: "index_entries_on_ffe_id"
     t.index ["horse_id"], name: "index_entries_on_horse_id"
     t.index ["rider_id"], name: "index_entries_on_rider_id"
+  end
+
+  create_table "entry_file_uploads", force: :cascade do |t|
+    t.text "content"
+    t.string "content_hash"
+    t.integer "content_size"
+    t.datetime "created_at", null: false
+    t.string "federation_organizer_id"
+    t.string "federation_user_email"
+    t.string "federation_user_name"
+    t.integer "show_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "content_hash"], name: "index_entry_file_uploads_on_show_id_and_content_hash", unique: true
+    t.index ["show_id"], name: "index_entry_file_uploads_on_show_id"
   end
 
   create_table "horses", force: :cascade do |t|
@@ -115,6 +129,7 @@ ActiveRecord::Schema[8.1].define(version: 2016_11_27_230619) do
   add_foreign_key "entries", "competitions"
   add_foreign_key "entries", "horses"
   add_foreign_key "entries", "people", column: "rider_id"
+  add_foreign_key "entry_file_uploads", "shows"
   add_foreign_key "people", "clubs"
   add_foreign_key "people", "regions"
   add_foreign_key "shows", "organizers"
