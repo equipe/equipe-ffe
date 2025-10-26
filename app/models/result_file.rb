@@ -177,7 +177,7 @@ class ResultFile
     xml.resultat start_attributes do
       xml.detail do
         (competition.result_details || RESULT_DETAILS_FALLBACK)["starts"].each do |manche|
-          if competition.result_details["starts"].one?
+          if (competition.result_details || RESULT_DETAILS_FALLBACK)["starts"].one?
             status = start["results"].detect { |result| result["status"].present? }&.dig("status")
           else
             status = start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("status")
@@ -202,7 +202,7 @@ class ResultFile
               when "Pénalités de Temps 2e phase"
                 start["results"].detect { |result| result["round_no"] == 2 }&.dig("time_faults")
               when "Points sur la piste"
-                if competition.result_details["starts"].one?
+                if (competition.result_details || RESULT_DETAILS_FALLBACK)["starts"].one?
                   start["results"].select { |result| result["type"] == "show_jumping" }.map { |result| result["fence_faults"] }.compact.sum
                 else
                   raise "Don't know how to get #{score['nom']} profile #{competition.profil_detail}"
