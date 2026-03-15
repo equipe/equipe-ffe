@@ -205,11 +205,13 @@ class ResultFile
                 if (competition.result_details || RESULT_DETAILS_FALLBACK)["starts"].one?
                   start["results"].select { |result| result["type"] == "show_jumping" }.map { |result| result["fence_faults"] }.compact.sum
                 else
-                  raise "Don't know how to get #{score['nom']} profile #{competition.profil_detail}"
+                  start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("fence_faults")
                 end
+              when "Temps au barrage"
+                start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("time")
               when "Total Pénalités"
                 start["results"].detect { |result| result["type"] == "show_jumping_total" }&.dig("faults")
-              when "Total pénalités", "Score sur la piste"
+              when "Total pénalités", "Total pénalités au barrage", "Score sur la piste"
                 start["results"].detect { |result| result["round_no"] == manche["num"].to_i }&.dig("faults")
               else
                 raise "Don't know how to get #{score['nom']} profile #{competition.profil_detail}"
@@ -244,7 +246,7 @@ class ResultFile
                 max_time_for(result_competition, 1)
               when "Temps accordé 2e phase"
                 max_time_for(result_competition, 2)
-              when "Temps accordé"
+              when "Temps accordé", "Temps accordé au barrage"
                 max_time_for(result_competition, manche["num"].to_i)
               else
                 raise "Don't know how to get #{score['nom']}"
