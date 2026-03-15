@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+scp deploy@ffe.equipeassets.com:/home/deploy/equipe-ffe-web/storage/production.sqlite3 storage/development.sqlite3
+bin/rails db:environment:set RAILS_ENV=development
