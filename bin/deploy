@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+require 'pathname'
+require 'fileutils'
+include FileUtils
+
+# path to your application root.
+APP_ROOT = Pathname.new File.expand_path('../../', __FILE__)
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+chdir APP_ROOT do
+  puts '== Eager load application =='
+  system! 'bundle exec rails runner "Rails.application.eager_load!"'
+  puts '== Run syntax check on all ruby files in the directory =='
+  system! 'git ls-files --cached --full-name |grep "\.rb$" | xargs -L 1 ruby -wc'
+  puts '== Deploying with Kamal =='
+  system! 'kamal deploy'
+  puts '== Done =='
+end
