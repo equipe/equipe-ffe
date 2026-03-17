@@ -16,6 +16,6 @@ chdir APP_ROOT do
   puts '== Run syntax check on all ruby files in the directory =='
   system! 'git ls-files --cached --full-name |grep "\.rb$" | xargs -L 1 ruby -wc'
   puts '== Deploying with Kamal =='
-  system! 'kamal deploy'
+  system! 'bundle exec kamal deploy'
   puts '== Done =='
 end
