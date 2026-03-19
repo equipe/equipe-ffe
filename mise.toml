@@ -1,3 +1,6 @@
 [env]
 PORT = "3060"
 RAILS_ENV = "development"
+
+[settings]
+idiomatic_version_file_enable_tools = ["ruby"]
