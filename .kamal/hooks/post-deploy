@@ -18,11 +18,15 @@
 # would look empty while deploys were happening.
 #
 #
-# Never fail a deploy over telemetry. A hook that exits non-zero raises
-# HookError in Kamal and fails the whole command, so the last word is `|| true`.
+# Never fail a deploy over telemetry: a hook that exits non-zero raises HookError
+# in Kamal and fails the whole command. Do not swallow the failure either. A bare
+# `|| true` hid three failure modes that look identical from the outside - gems
+# not installed on the deploying machine, no api key in credentials, or the
+# command never reached. Echoing reports the failure and still exits 0.
 
 bundle exec honeybadger deploy \
   --environment "${KAMAL_DESTINATION:-production}" \
   --revision "$KAMAL_VERSION" \
   --user "$KAMAL_PERFORMER" \
-  --repository "git@github.com:equipe/equipe-ffe.git" || true
+  --repository "git@github.com:equipe/equipe-ffe.git" ||
+  echo "post-deploy: honeybadger deploy failed, the deploy itself is unaffected"
