@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Tell Honeybadger which revision just went live.
+#
+# Kamal has no deploy tracking of its own. On Heroku the platform reports
+# deploys for us, which is why the Heroku apps show up under Deploys in
+# Honeybadger and the Kamal ones did not.
+#
+# Hooks run on the machine that runs `kamal deploy`, not on the server. That is
+# what makes this simple: `honeybadger deploy` finds config/environment.rb in
+# the working directory, boots the app, and then reads config/honeybadger.yml
+# through ERB - so the api key comes out of Rails credentials on its own. No key
+# has to be passed in or kept in .kamal/secrets.
+#
+# --environment is not optional. honeybadger.yml sets env from Rails.env, which
+# is development on a laptop. Without this flag every deploy would be filed as a
+# development one, which is worse than no reporting at all: the Deploys list
+# would look empty while deploys were happening.
+#
+#
+# Never fail a deploy over telemetry. A hook that exits non-zero raises
+# HookError in Kamal and fails the whole command, so the last word is `|| true`.
+
+bundle exec honeybadger deploy \
+  --environment "${KAMAL_DESTINATION:-production}" \
+  --revision "$KAMAL_VERSION" \
+  --user "$KAMAL_PERFORMER" \
+  --repository "git@github.com:equipe/equipe-ffe.git" || true
