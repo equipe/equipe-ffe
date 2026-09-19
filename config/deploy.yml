@@ -55,6 +55,11 @@ env:
     # Log everything from Rails
     # RAILS_LOG_LEVEL: debug
 
+# Hook output is hidden at the default verbosity, so a failing post-deploy
+# hook (the Honeybadger deploy notice) goes unseen. Show its one line.
+hooks_output:
+  post-deploy: verbose
+
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
 aliases:
