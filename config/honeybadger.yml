@@ -3,6 +3,14 @@
 
 api_key: '<%= Rails.application.credentials.honeybadger_api_key %>'
 
+# Errors, check-ins and deploys go to equipe-monitor, our own Honeybadger
+# replacement, instead of api.honeybadger.io. The API key stays the same.
+# Its Let's Encrypt certificate chains to ISRG roots, which the gem's own old
+# CA bundle lacks, so the system's CA certificates are used instead.
+connection:
+  host: monitor.equipe.com
+  system_ssl_cert_chain: true
+
 # The environment your app is running in.
 env: "<%= Rails.env %>"
 
