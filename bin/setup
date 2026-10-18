@@ -16,6 +16,10 @@ FileUtils.chdir APP_ROOT do
   system! "app-credentials"
 
   puts "== Installing dependencies =="
+  # RubyGems ships its own bundler, which is rarely the version Gemfile.lock was
+  # written with, and bundler refuses to run as any other version than that one
+  bundler_version = File.read("Gemfile.lock")[/BUNDLED WITH\n\s+(\S+)/, 1]
+  system! "gem install bundler -v #{bundler_version} --conservative"
   system("bundle check") || system!("bundle install")
 
   # puts "\n== Copying sample files =="
